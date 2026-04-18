@@ -25,11 +25,14 @@ running MicroPython — all from a single pico_ctl command.
 
 %install
 %py3_install
+mkdir -p %{buildroot}%{_mandir}/man1
+install -m 644 pico_ctl.1 %{buildroot}%{_mandir}/man1/pico_ctl.1
 
 %files
 %license LICENSE
 %doc README.md
 %{_bindir}/pico_ctl
+%{_mandir}/man1/pico_ctl.1*
 %{python3_sitelib}/pico_ctl.py
 %{python3_sitelib}/pico_serial.py
 %{python3_sitelib}/__pycache__/pico_ctl*

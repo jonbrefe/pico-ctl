@@ -54,7 +54,7 @@ jobs:
           mkdir -p ~/rpmbuild/{SOURCES,SPECS}
           tar czf ~/rpmbuild/SOURCES/pico-ctl-${VERSION}.tar.gz \
             --transform "s,^,pico-ctl-${VERSION}/," \
-            pico_ctl.py pico_serial.py setup.py requirements.txt README.md LICENSE pico-ctl.spec
+            pico_ctl.py pico_serial.py pico_ctl.1 setup.py requirements.txt README.md LICENSE pico-ctl.spec
 
           cp pico-ctl.spec ~/rpmbuild/SPECS/
           rpmbuild -bb ~/rpmbuild/SPECS/pico-ctl.spec

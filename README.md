@@ -264,6 +264,7 @@ with PicoSerial() as pico:
 pico-ctl/
 ├── pico_ctl.py           # All-in-one CLI (info, ls, upload, backup, monitor, etc.)
 ├── pico_serial.py        # Shared library — COM auto-detect, REPL, file transfer
+├── pico_ctl.1            # Man page (groff)
 ├── requirements.txt      # pyserial>=3.5
 ├── setup.py              # Package setup with console_scripts entry point
 ├── pico-ctl.spec         # RPM spec file

@@ -1,0 +1,356 @@
+.\" Man page for pico_ctl
+.TH PICO_CTL 1 "April 2026" "pico-ctl 0.1.0" "User Commands"
+.SH NAME
+pico_ctl \- all-in-one CLI for managing a Raspberry Pi Pico over USB serial
+.SH SYNOPSIS
+.B pico_ctl
+.RB [ \-\-port
+.IR PORT ]
+.RB [ \-\-sync\-rtc ]
+.IR command
+.RI [ options ]
+.SH DESCRIPTION
+.B pico_ctl
+manages a Raspberry Pi Pico running MicroPython over USB serial.
+Upload files, backup, monitor, reset, and inspect \(em all from a single command.
+.PP
+If no subcommand is given, defaults to
+.BR info .
+.PP
+The Pico is auto-detected by USB vendor ID (0x2E8A).
+Works with Pico, Pico\ W, Pico\ 2, and Pico\ 2\ W.
+.SH GLOBAL OPTIONS
+.TP
+.BR \-p ", " \-\-port " " \fIPORT\fR
+Serial port to use (e.g.\&
+.IR /dev/ttyACM0 ).
+Auto-detected if omitted.
+.TP
+.B \-\-sync\-rtc
+Sync the device RTC to host time on connect.
+Can also be enabled by setting the environment variable
+.BR PICO_SYNC_RTC=1 .
+.SH COMMANDS
+.SS Inspect
+.TP
+.B info
+Show firmware version, board ID, CPU frequency, RAM, flash usage, and file listing.
+This is the default command when none is specified.
+.TP
+.B ls \fR[\fIPATH\fR] [\fB\-\-flat\fR]
+List files on the Pico.
+.I PATH
+defaults to
+.BR / .
+Listing is recursive by default; use
+.B \-\-flat
+(or
+.BR \-f )
+for a single-directory listing.
+.TP
+.B tree \fR[\fIPATH\fR]
+Show a file tree with SHA256 hashes.
+.I PATH
+defaults to
+.BR / .
+.TP
+.B cat \fIPATH\fR
+Print the contents of a file on the Pico.
+.TP
+.B edit \fIPATH\fR
+Download a file from the Pico, open it in
+.BR $EDITOR ,
+and upload it back if changed.
+.TP
+.B cp \fISRC\fR \fIDST\fR
+Copy files to or from the Pico.
+Prefix a path with
+.B :
+to indicate the Pico filesystem (e.g.\&
+.IR :config.py ).
+.TP
+.B df
+Show flash and RAM usage summary.
+.TP
+.B ports
+List available serial ports on the host.
+.SS Execute
+.TP
+.B exec \fICODE\fR \fR[\fB\-t\fR \fITIMEOUT\fR]
+Run arbitrary MicroPython code on the Pico.
+.I TIMEOUT
+defaults to 10 seconds.
+.TP
+.B run \fIFILE\fR \fR[\fB\-t\fR \fITIMEOUT\fR] [\fB\-\-detach\fR]
+Run a
+.I .py
+file on the Pico and stream output.
+.I TIMEOUT
+defaults to 180 seconds.
+Use
+.B \-\-detach
+(or
+.BR \-d )
+to launch the script and disconnect; the Pico keeps running.
+.TP
+.B mip \fIPACKAGE\fR \fR[\fB\-\-target\fR \fIDIR\fR] [\fB\-t\fR \fITIMEOUT\fR]
+Install a MicroPython package via
+.BR mip .
+Requires WiFi on the Pico.
+.I PACKAGE
+is a package spec such as
+.I github:user/repo
+or a package name.
+.B \-\-target
+sets the install directory on the Pico (default:
+.IR /lib ).
+.I TIMEOUT
+defaults to 60 seconds.
+.TP
+.B repl
+Open an interactive MicroPython REPL session.
+Press
+.B Ctrl+]
+to exit.
+.SS File Management
+.TP
+.B upload \fR[\fILOCAL PICO\fR ...] [\fB\-\-dir\fR \fILOCAL_DIR PICO_PREFIX\fR] [\fB\-\-src\fR \fIDIR\fR] [\fB\-\-dry\-run\fR]
+Upload files and directories to the Pico.
+.RS
+.TP
+.I "LOCAL PICO ..."
+Positional pairs of local path and Pico destination path.
+.TP
+.BR \-d ", " \-\-dir " " "\fILOCAL_DIR PICO_PREFIX\fR"
+Upload a directory tree, preserving structure under
+.IR PICO_PREFIX .
+.TP
+.BR \-s ", " \-\-src " " \fIDIR\fR
+Upload all
+.I .py
+files from
+.I DIR
+to the Pico root.
+.TP
+.BR \-n ", " \-\-dry\-run
+Show what would be uploaded without transferring.
+.RE
+.IP
+After uploading
+.I .py
+files, the module cache on the Pico is automatically cleared.
+.TP
+.B sync \fILOCAL_DIR\fR \fIPICO_PREFIX\fR \fR[\fB\-\-dry\-run\fR]
+Upload only changed files (by size comparison).
+Use
+.B \-\-dry\-run
+(or
+.BR \-n )
+to preview.
+.TP
+.B backup \fR[\fB\-o\fR \fIDIR\fR] [\fB\-f\fR \fIPATH\fR ...] [\fB\-d\fR \fIPICO_DIR\fR] [\fB\-l\fR]
+Download files from the Pico to a local directory.
+.RS
+.TP
+.BR \-o ", " \-\-output " " \fIDIR\fR
+Local directory to save files (default:
+.IR backup/ ).
+.TP
+.BR \-f ", " \-\-files " " "\fIPATH\fR ..."
+Specific Pico paths to download (default: all).
+.TP
+.BR \-d ", " \-\-dir " " \fIPICO_DIR\fR
+Download only files under this Pico directory.
+.TP
+.BR \-l ", " \-\-list
+List files on the Pico without downloading.
+.RE
+.TP
+.B rm \fIPATH\fR \fR[\fB\-r\fR]
+Delete a file or directory from the Pico.
+Use
+.B \-r
+(or
+.BR \-\-recursive )
+to delete a directory and all its contents.
+.SS Device Control
+.TP
+.B reset
+Soft-reset the Pico (restarts
+.IR main.py ).
+.TP
+.B hard
+Hard reset via
+.BR machine.reset() .
+.TP
+.B bootsel
+Enter BOOTSEL mode for
+.I .uf2
+firmware flashing.
+The Pico disconnects from serial and appears as a USB drive.
+.TP
+.B rtc \fR[\fB\-\-set\fR]
+Get or set the device real-time clock.
+Without
+.BR \-\-set ,
+prints the current RTC time.
+With
+.B \-\-set
+(or
+.BR \-s ),
+syncs the device RTC to the host clock.
+.SS Monitor
+.TP
+.B monitor \fR[\fB\-t\fR \fISECONDS\fR] [\fB\-m\fR \fIMARKER\fR ...]
+Soft-reset and stream boot output.
+.I SECONDS
+defaults to 45.
+.B \-\-markers
+(or
+.BR \-m )
+sets success strings to watch for (default:
+.IR "Display updated" ", "
+.IR "No change" ", "
+.IR "Free mem" ).
+.TP
+.B watch \fR[\fB\-t\fR \fISECONDS\fR] [\fB\-\-reset\fR]
+Attach to serial output without resetting.
+.I SECONDS
+defaults to 0 (indefinite).
+Use
+.B \-\-reset
+(or
+.BR \-r )
+to soft-reset before watching.
+Press
+.B Ctrl+C
+to detach; the Pico continues running.
+.SH SIGNALS
+All commands handle
+.B SIGINT
+(Ctrl+C) cleanly:
+.IP \(bu 2
+Streaming commands
+.RB ( run ", " monitor ", " watch )
+detach from serial; the Pico continues running.
+.IP \(bu 2
+Multi-step commands
+.RB ( upload ", " sync ", " backup ", " "rm \-r" )
+stop and report partial progress.
+.IP \(bu 2
+All other commands exit immediately.
+.SH ENVIRONMENT
+.TP
+.B PICO_SYNC_RTC
+Set to
+.B 1
+to automatically sync the device RTC on every connection (equivalent to
+.BR \-\-sync\-rtc ).
+.TP
+.B EDITOR
+Used by the
+.B edit
+subcommand to choose the text editor.
+.SH FILES
+.TP
+.I /dev/ttyACM0
+Default serial device on Linux when a single Pico is connected.
+.TP
+.I COM3
+Typical serial port on Windows.
+.SH EXIT STATUS
+.TP
+.B 0
+Success.
+.TP
+.B 1
+Error (no Pico found, timeout, file not found, etc.).
+.SH EXAMPLES
+Show device info (default command):
+.PP
+.RS
+.nf
+pico_ctl
+.fi
+.RE
+.PP
+Upload a directory tree:
+.PP
+.RS
+.nf
+pico_ctl upload \-\-dir ../pico\-paper\-lib /pico_paper_lib
+.fi
+.RE
+.PP
+Sync only changed files:
+.PP
+.RS
+.nf
+pico_ctl sync ../pico\-paper\-lib /pico_paper_lib \-\-dry\-run
+.fi
+.RE
+.PP
+Install a package via mip:
+.PP
+.RS
+.nf
+pico_ctl mip github:jonbrefe/pico\-paper\-lib
+.fi
+.RE
+.PP
+Run a script and watch output:
+.PP
+.RS
+.nf
+pico_ctl run test_all.py \-\-timeout 300
+.fi
+.RE
+.PP
+Launch and detach (Pico keeps running):
+.PP
+.RS
+.nf
+pico_ctl run main.py \-\-detach
+.fi
+.RE
+.PP
+Copy a file from Pico to local:
+.PP
+.RS
+.nf
+pico_ctl cp :config.py ./config_backup.py
+.fi
+.RE
+.PP
+Interactive REPL:
+.PP
+.RS
+.nf
+pico_ctl repl
+.fi
+.RE
+.PP
+Monitor boot with custom markers:
+.PP
+.RS
+.nf
+pico_ctl monitor \-\-timeout 60 \-\-markers "WiFi connected" "Ready"
+.fi
+.RE
+.SH COMPATIBILITY
+Works with all Raspberry Pi Pico variants: Pico, Pico\ W, Pico\ 2, Pico\ 2\ W.
+Requires MicroPython firmware on the Pico (tested with v1.28.0).
+.PP
+On WSL2, USB passthrough via
+.B usbipd-win
+is required.
+.SH BUGS
+Report bugs at <https://github.com/jonbrefe/pico\-ctl/issues>.
+.SH AUTHOR
+Jonathan Brenes
+.SH SEE ALSO
+.BR mpremote (1),
+.BR picocom (1),
+.BR pyserial (3)
+.PP
+Project: <https://github.com/jonbrefe/pico\-ctl>

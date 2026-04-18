@@ -13,6 +13,7 @@ setup(
     py_modules=['pico_ctl', 'pico_serial'],
     python_requires='>=3.8',
     install_requires=['pyserial>=3.5'],
+    data_files=[('share/man/man1', ['pico_ctl.1'])],
     entry_points={
         'console_scripts': [
             'pico_ctl=pico_ctl:main',

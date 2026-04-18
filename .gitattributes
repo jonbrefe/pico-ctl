@@ -1,0 +1,3 @@
+# Force LF line endings for packaging files (RPM/DEB builds fail with CRLF)
+*.spec text eol=lf
+debian/* text eol=lf

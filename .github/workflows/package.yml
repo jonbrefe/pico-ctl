@@ -22,10 +22,9 @@ jobs:
 
       - name: Build .deb package
         run: |
-          # Create the source tarball structure expected by dpkg-buildpackage
           VERSION=$(python3 setup.py --version)
-          mkdir -p build_deb
-          cp -r . build_deb/pico-ctl-${VERSION}
+          mkdir -p build_deb/pico-ctl-${VERSION}
+          rsync -a --exclude=build_deb . build_deb/pico-ctl-${VERSION}/
           cd build_deb/pico-ctl-${VERSION}
           dpkg-buildpackage -us -uc -b
           cd ..

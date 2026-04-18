@@ -15,13 +15,31 @@ Works with all Raspberry Pi Pico variants: Pico, Pico W, Pico 2, Pico 2 W (auto-
 
 ## Installation
 
-### From package (recommended)
+### From GitHub Release (recommended)
+
+Download and install the latest release:
 
 ```bash
 # Debian/Ubuntu
+curl -sLO "$(curl -s https://api.github.com/repos/jonbrefe/pico-ctl/releases/latest \
+  | grep browser_download_url | grep '\.deb"' | cut -d '"' -f 4)"
 sudo dpkg -i pico-ctl_*.deb
 
 # RPM-based (Fedora, RHEL, openSUSE)
+curl -sLO "$(curl -s https://api.github.com/repos/jonbrefe/pico-ctl/releases/latest \
+  | grep browser_download_url | grep '\.rpm"' | cut -d '"' -f 4)"
+sudo rpm -i pico-ctl-*.rpm
+```
+
+Or with the **GitHub CLI**:
+
+```bash
+# Debian/Ubuntu
+gh release download --repo jonbrefe/pico-ctl --pattern '*.deb'
+sudo dpkg -i pico-ctl_*.deb
+
+# RPM-based
+gh release download --repo jonbrefe/pico-ctl --pattern '*.rpm'
 sudo rpm -i pico-ctl-*.rpm
 ```
 

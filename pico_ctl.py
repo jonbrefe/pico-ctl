@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Jonathan Brenes
 """
 pico_ctl — All-in-one CLI for managing a Raspberry Pi Pico running MicroPython.
 
@@ -1049,7 +1051,7 @@ def cmd_monitor(pico, args):
 
 
 def _auto_sync_rtc(pico):
-    """Sync Pico RTC to host local time"""
+    """Sync Pico RTC to host local time."""
     from datetime import datetime
     now = datetime.now()
     wd = now.weekday()

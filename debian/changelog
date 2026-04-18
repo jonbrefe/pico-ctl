@@ -1,3 +1,10 @@
+pico-ctl (0.2.0-1) unstable; urgency=low
+
+  * Add pico_ctl.1 man page covering all 22 subcommands.
+  * Add GitHub Release install instructions to README.
+
+ -- Jonathan Brenes <jonathan@brenes.dev>  Thu, 17 Apr 2026 18:00:00 -0600
+
 pico-ctl (0.1.0-1) unstable; urgency=low
 
   * Initial release.

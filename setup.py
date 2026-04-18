@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pico-ctl',
-    version='0.1.0',
+    version='0.2.0',
     description='All-in-one CLI for managing a Raspberry Pi Pico over USB serial',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',

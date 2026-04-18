@@ -4,7 +4,7 @@
 
 All-in-one CLI tool for managing a **Raspberry Pi Pico** running MicroPython over USB serial. Built on a shared `PicoSerial` library that handles COM port auto-detection, REPL paste-mode execution, base64-chunked file transfer, and remote filesystem operations.
 
-Everything is in a single `pico_ctl.py` with subcommands: info, ls, cat, df, reset, hard, bootsel, rm, exec, run, upload, sync, backup, monitor, watch, repl.
+Everything is in a single `pico_ctl.py` with subcommands: info, ls, tree, cat, edit, cp, df, ports, exec, mip, run, upload, sync, backup, rm, reset, hard, bootsel, rtc, monitor, watch, repl.
 
 ## Target Platform
 
@@ -67,10 +67,10 @@ debian/          → Debian/Ubuntu packaging (control, rules, changelog, copyrig
 
 Subcommands are grouped by category in the CLI help and argparse registration:
 
-1. **Inspect**: info, ls, cat, df
-2. **Execute**: exec, run, repl
+1. **Inspect**: info, ls, tree, cat, edit, cp, df, ports
+2. **Execute**: exec, mip, run, repl
 3. **File management**: upload, sync, backup, rm
-4. **Device control**: reset, hard, bootsel
+4. **Device control**: reset, hard, bootsel, rtc
 5. **Monitor**: monitor, watch
 
 Key behaviors:
@@ -78,8 +78,15 @@ Key behaviors:
 - The `rm` subcommand supports `-r` for recursive directory deletion
 - The `backup` subcommand supports `--dir` to download a specific subtree
 - The `info` subcommand shows board ID, CPU, RAM, and flash usage
+- The `tree` subcommand shows file tree with SHA256 hashes
 - The `cat` subcommand prints file contents via base64 download
+- The `edit` subcommand downloads a file, opens `$EDITOR`, and re-uploads if changed
+- The `cp` subcommand copies files to/from the Pico (`:` prefix = Pico path)
 - The `df` subcommand shows flash/RAM usage summary
+- The `ports` subcommand lists available serial ports (no Pico connection needed)
+- The `mip` subcommand installs MicroPython packages via `mip` on the Pico (requires WiFi)
+- The `rtc` subcommand reads or sets the Pico's real-time clock
+- Global `--sync-rtc` flag (or `PICO_SYNC_RTC=1` env var) auto-syncs RTC to host time on connect
 - The `sync` subcommand compares by file size and uploads only changed files
 - The `watch` subcommand attaches to serial without resetting; `--reset` to reset first
 - The `repl` subcommand provides an interactive REPL; Ctrl+] to exit
@@ -93,6 +100,7 @@ No automated test suite. Test against a physical Pico:
 
 ```bash
 python3 pico_ctl.py info
+python3 pico_ctl.py mip github:jonbrefe/pico-paper-lib
 python3 pico_ctl.py upload --dir ../pico-paper-lib /pico_paper_lib
 python3 pico_ctl.py run test_all.py
 python3 pico_ctl.py monitor --timeout 30

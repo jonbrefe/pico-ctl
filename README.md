@@ -71,6 +71,7 @@ pico_ctl backup
 | | `df` | Show flash and RAM usage summary |
 | **Execute** | `exec <code>` | Run arbitrary MicroPython on the Pico |
 | | `run <file>` | Run a `.py` file and stream output (`--detach` to background) |
+| | `mip <package>` | Install a MicroPython package via `mip` (requires WiFi on Pico) |
 | | `repl` | Interactive MicroPython REPL session (Ctrl+] to exit) |
 | **File mgmt** | `upload` | Upload files/directories to the Pico (auto-clears module cache) |
 | | `sync` | Upload only changed files (by size comparison) |
@@ -92,13 +93,15 @@ pico_ctl cat /config.py               # print file contents
 pico_ctl df                           # flash and RAM usage
 ```
 
-### Execute: exec / run / repl
+### Execute: exec / run / mip / repl
 
 ```bash
 pico_ctl exec "import gc; gc.collect(); print(gc.mem_free())"
 pico_ctl run test_all.py
 pico_ctl run main.py --timeout 300
 pico_ctl run main.py --detach          # launch and disconnect (Pico keeps running)
+pico_ctl mip github:jonbrefe/pico-paper-lib   # install a package via mip
+pico_ctl mip github:user/repo --target /lib   # specify install directory
 pico_ctl repl                          # interactive REPL (Ctrl+] to exit)
 ```
 

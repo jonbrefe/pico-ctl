@@ -374,6 +374,22 @@ def cmd_exec(pico, args):
             print(line)
 
 
+def cmd_mip(pico, args):
+    """Install a MicroPython package on the Pico using mip."""
+    pkg = args.package
+    target = args.target
+    code = 'import mip\nmip.install({!r}'.format(pkg)
+    if target:
+        code += ', target={!r}'.format(target)
+    code += ')'
+    print(f"Installing {pkg}...")
+    resp = pico.exec(code, timeout=args.timeout)
+    for line in resp.split('\n'):
+        line = line.strip()
+        if line and '>>>' not in line:
+            print(line)
+
+
 def cmd_cat(pico, args):
     """Print the contents of a file on the Pico."""
     data = pico.download_file(args.path)
@@ -1096,6 +1112,14 @@ def main():
     exec_p.add_argument('--timeout', '-t', type=int, default=10,
                         help='Execution timeout in seconds')
 
+    # mip
+    mip_p = sub.add_parser('mip', help='Install a MicroPython package via mip (requires WiFi)')
+    mip_p.add_argument('package', help='Package spec (e.g. github:user/repo or package-name)')
+    mip_p.add_argument('--target', metavar='DIR',
+                       help='Install target directory on the Pico (default: /lib)')
+    mip_p.add_argument('--timeout', '-t', type=int, default=60,
+                       help='Timeout in seconds (default: 60)')
+
     # run
     run_p = sub.add_parser('run', help='Run a .py file on the Pico and stream output')
     run_p.add_argument('file', help='Pico filename to run (e.g. test_all.py)')
@@ -1203,6 +1227,7 @@ def main():
                 'rtc': cmd_rtc,
                 'rm': cmd_rm,
                 'exec': cmd_exec,
+                'mip': cmd_mip,
                 'run': cmd_run,
                 'upload': cmd_upload,
                 'sync': cmd_sync,

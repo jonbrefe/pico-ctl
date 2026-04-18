@@ -99,24 +99,24 @@ Key behaviors:
 No automated test suite. Test against a physical Pico:
 
 ```bash
-python3 pico_ctl.py info
-python3 pico_ctl.py ls /
-python3 pico_ctl.py upload some_file.py /some_file.py
-python3 pico_ctl.py cat /some_file.py
-python3 pico_ctl.py rm /some_file.py
-python3 pico_ctl.py mip github:jonbrefe/pico-paper-lib
-python3 pico_ctl.py run test_all.py
-python3 pico_ctl.py monitor --timeout 30
+pico_ctl info
+pico_ctl ls /
+pico_ctl upload some_file.py /some_file.py
+pico_ctl cat /some_file.py
+pico_ctl rm /some_file.py
+pico_ctl mip github:jonbrefe/pico-paper-lib
+pico_ctl run test_all.py
+pico_ctl monitor --timeout 30
 ```
 
 After any code change, always verify `info`, `upload`, and `monitor` still work correctly against a connected Pico.
 
 ```bash
-python3 pico_ctl.py info
-python3 pico_ctl.py mip github:jonbrefe/pico-paper-lib
-python3 pico_ctl.py upload --dir ../pico-paper-lib /pico_paper_lib
-python3 pico_ctl.py run test_all.py
-python3 pico_ctl.py monitor --timeout 30
+pico_ctl info
+pico_ctl mip github:jonbrefe/pico-paper-lib
+pico_ctl upload --dir ../pico-paper-lib /pico_paper_lib
+pico_ctl run test_all.py
+pico_ctl monitor --timeout 30
 ```
 
 ## License

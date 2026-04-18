@@ -34,11 +34,11 @@ There is no automated test suite — all testing requires a physical Pico connec
 Before submitting a PR, verify at minimum:
 
 ```bash
-python3 pico_ctl.py info
-python3 pico_ctl.py ls /
-python3 pico_ctl.py upload some_file.py /some_file.py
-python3 pico_ctl.py cat /some_file.py
-python3 pico_ctl.py rm /some_file.py
+pico_ctl info
+pico_ctl ls /
+pico_ctl upload some_file.py /some_file.py
+pico_ctl cat /some_file.py
+pico_ctl rm /some_file.py
 ```
 
 ## Pull Requests

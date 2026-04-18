@@ -1,3 +1,12 @@
+pico-ctl (0.2.1-1) unstable; urgency=low
+
+  * Fix upload MemoryError: write file chunks incrementally instead of
+    concatenating all decoded data in RAM.
+  * Add gc.collect() before and after file writes on the Pico.
+  * Detect MemoryError during upload and show actionable error message.
+
+ -- Jonathan Brenes <jonathan@brenes.dev>  Fri, 18 Apr 2026 12:00:00 -0600
+
 pico-ctl (0.2.0-1) unstable; urgency=low
 
   * Add pico_ctl.1 man page covering all 22 subcommands.

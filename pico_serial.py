@@ -205,14 +205,18 @@ class PicoSerial:
     # ------------------------------------------------------------------
     def _setup_upload_helper(self):
         """Inject the base64 write helper onto the Pico."""
-        self.exec("""import ubinascii, os
+        self.exec("""import ubinascii, os, gc
 def _wf(name, chunks):
-    data = b''
-    for c in chunks:
-        data += ubinascii.a2b_base64(c)
+    gc.collect()
+    n = 0
     with open(name, 'wb') as f:
-        f.write(data)
-    print('WROTE:' + name + ':' + str(len(data)))
+        for c in chunks:
+            d = ubinascii.a2b_base64(c)
+            f.write(d)
+            n += len(d)
+    chunks.clear()
+    gc.collect()
+    print('WROTE:' + name + ':' + str(n))
 def _mkp(path):
     parts = path.strip('/').split('/')
     cur = ''
@@ -252,6 +256,11 @@ def _mkp(path):
             adds = ''.join(f"_c.append('{c}')\n" for c in batch)
             resp = self.exec(adds, timeout=10)
             if 'Traceback' in resp:
+                if 'MemoryError' in resp:
+                    raise RuntimeError(
+                        f"Pico ran out of memory at chunk {i}. "
+                        "Reset the Pico (pico_ctl reset) and try again."
+                    )
                 raise RuntimeError(f"Upload error at chunk {i}: {resp}")
 
         # Larger files need more time to decode + write
@@ -261,6 +270,11 @@ def _mkp(path):
             if line.strip().startswith('WROTE:'):
                 parts = line.strip().split(':')
                 return int(parts[2]) if len(parts) >= 3 else len(content)
+        if 'MemoryError' in resp:
+            raise RuntimeError(
+                "Pico ran out of memory during file write. "
+                "Reset the Pico (pico_ctl reset) and try again."
+            )
         raise RuntimeError(f"No write confirmation. Response: {resp[-300:]}")
 
     def list_files(self, path='/', recursive=True):

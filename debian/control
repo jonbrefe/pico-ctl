@@ -1,0 +1,14 @@
+Source: pico-ctl
+Section: utils
+Priority: optional
+Maintainer: Jonathan Brenes <jonathan@brenes.dev>
+Build-Depends: debhelper-compat (= 13), python3, dh-python
+Standards-Version: 4.6.0
+Homepage: https://github.com/jonbrefe/pico-ctl
+
+Package: pico-ctl
+Architecture: all
+Depends: python3 (>= 3.8), python3-serial, ${misc:Depends}
+Description: All-in-one CLI for managing a Raspberry Pi Pico over USB serial
+ Upload files, backup, monitor, reset, and inspect a Raspberry Pi Pico
+ running MicroPython — all from a single pico_ctl command.
